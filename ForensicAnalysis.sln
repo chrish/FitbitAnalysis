@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DumpAnalyzer", "DumpAnalyzer\DumpAnalyzer.csproj", "{BD13BE39-ED29-44C9-A949-EA3BE559F5D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DumpAnalyzerTests", "DumpAnalyzerTests\DumpAnalyzerTests.csproj", "{0FD450D9-C1CC-4810-B3EF-90C1DD6A7EE5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD13BE39-ED29-44C9-A949-EA3BE559F5D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD13BE39-ED29-44C9-A949-EA3BE559F5D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD13BE39-ED29-44C9-A949-EA3BE559F5D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD13BE39-ED29-44C9-A949-EA3BE559F5D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FD450D9-C1CC-4810-B3EF-90C1DD6A7EE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FD450D9-C1CC-4810-B3EF-90C1DD6A7EE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FD450D9-C1CC-4810-B3EF-90C1DD6A7EE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FD450D9-C1CC-4810-B3EF-90C1DD6A7EE5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
