@@ -57,6 +57,8 @@ namespace DumpAnalyzer
 
             File.AppendAllText(outputPath, header + Environment.NewLine);
 
+            string outfile = outputPath + "outputFromFitbitDump.txt";
+
             foreach (Dump d in dumps)
             {
                 string output = d.Filename + "\t\t";
