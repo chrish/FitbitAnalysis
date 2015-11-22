@@ -51,13 +51,14 @@ namespace DumpAnalyzer
                 outputPath += Path.DirectorySeparatorChar;
             }
 
+
             string charsep = "\t";
 
             string header = "Filename\t\t\t\tHeader\t\t\t\t\t\t\t\t\t\t\t\tFooter\t\t\t\t\t\t\tDeviceId\tHeaderSeq\t\tModelNo\t\t\t\t\tFooterInd\tDumpCRC\tDumpSize\tSize in Dec\t\tCalc size";
 
-            File.AppendAllText(outputPath, header + Environment.NewLine);
-
             string outfile = outputPath + "outputFromFitbitDump.txt";
+            File.AppendAllText(outfile, header + Environment.NewLine);
+
 
             foreach (Dump d in dumps)
             {

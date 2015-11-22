@@ -17,10 +17,10 @@ namespace FitbitAPIExtractor.FitbitApi
         public JObject StepsJson { get; set; }
         public JObject CaloriesJson { get; set; }
         public JObject FloorsJson { get; set; }
-        public JObject ElevationJson { get; set; }
+        public JObject PulseJson { get; set; }
         public JObject DistanceJson { get; set; }
 
-        public void ParseData()
+        public List<Minute> ParseData()
         {
             Dictionary<string, Minute> minutes = new Dictionary<string, Minute>();
 
@@ -35,8 +35,17 @@ namespace FitbitAPIExtractor.FitbitApi
                     minutes.Add(timestamp, m);
                 }
             }
+
+            return minutes.Values.ToList();
         }
             
+        /// <summary>
+        /// Parses all the data into minute objects containing all stats for a given 
+        /// minute. Will loop over steps using that timestamp to extract data from the 
+        /// other datasets to avoid multiple loops.
+        /// </summary>
+        /// <param name="timestamp"></param>
+        /// <returns></returns>
         protected Minute ParseMinute(string timestamp)
         {
             Minute m = new Minute();
@@ -50,6 +59,40 @@ namespace FitbitAPIExtractor.FitbitApi
 
                     int steps = Convert.ToInt32(StepsJson["activities-steps-intraday"]["dataset"][i]["value"]);
                     m.Steps = steps;
+
+                    // Steps will always exist, and be 0 if no steps have been registered. 
+                    // Other data such as HR can be nonexistant if nothing has been registered
+                    int floors = 0;
+
+                    if (FloorsJson["activities-floors-intraday"]["dataset"].Count() > i)
+                    {
+                        floors = Convert.ToInt32(FloorsJson["activities-floors-intraday"]["dataset"][i]["value"]);
+                    }
+                    m.Floors = floors;
+
+                    int distance = 0;
+                    if (DistanceJson["activities-distance-intraday"]["dataset"].Count() > i)
+                    {
+                        distance = Convert.ToInt32(DistanceJson["activities-distance-intraday"]["dataset"][i]["value"]);
+                    }
+                    m.Distance = distance;
+
+                    int calories = 0;
+                    if (CaloriesJson["activities-calories-intraday"]["dataset"].Count() > i)
+                    {
+                        calories = Convert.ToInt32(CaloriesJson["activities-calories-intraday"]["dataset"][i]["value"]);
+                    }
+                    m.Calories = calories;
+                    
+
+                    int heart = 0;
+                    if (PulseJson["activities-heart-intraday"]["dataset"].Count() > i)
+                    {
+                        heart = Convert.ToInt32(PulseJson["activities-heart-intraday"]["dataset"][i]["value"]);
+                    }    
+                    m.Heartrate = heart;
+                        
+                    
                     break;
                 }    
             }

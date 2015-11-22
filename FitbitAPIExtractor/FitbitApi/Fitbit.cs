@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace FitbitAPIExtractor.FitbitApi
@@ -13,7 +16,7 @@ namespace FitbitAPIExtractor.FitbitApi
         public static readonly string ACT_STEPS = "activities/steps";
         public static readonly string ACT_DIST = "activities/distance";
         public static readonly string ACT_FLRS = "activities/floors";
-        public static readonly string ACT_ELEV = "activities/elevation";
+        public static readonly string ACT_HR = "activities/heart";
 
         public static readonly string INT_1MIN = "1min";
         public static readonly string INT_15MIN = "15min";
@@ -22,20 +25,23 @@ namespace FitbitAPIExtractor.FitbitApi
 
         public static readonly string DEFAULT_RESPONSEFORMAT = ".json";
 
+        public Dictionary<DateTime, List<Minute>> RetrievedData;
+
         protected string Token;
 
         public Fitbit(string token)
         {
+            RetrievedData = new Dictionary<DateTime, List<Minute>>();
             Token = token;
         }
+        
 
-
-        public List<Minute> GetData()
+        public void GetData()
         {
-            return GetData(Program.StartDate, Program.EndDate);
+            GetData(Program.StartDate, Program.EndDate);
         }
 
-        public List<Minute> GetData(DateTime from, DateTime to)
+        public void GetData(DateTime from, DateTime to)
         {
             DateTime iteratorDate = from;
             while (iteratorDate <= to)
@@ -43,27 +49,53 @@ namespace FitbitAPIExtractor.FitbitApi
                 FitbitDataRequest stepsRequest = new FitbitDataRequest(Token);
                 KeyValuePair<string, string> step = stepsRequest.GetData(iteratorDate, Fitbit.ACT_STEPS);
 
-                /*FitbitDataRequest caloriesRequest = new FitbitDataRequest(Token);
+                FitbitDataRequest caloriesRequest = new FitbitDataRequest(Token);
                 KeyValuePair<string, string> cal = caloriesRequest.GetData(iteratorDate, Fitbit.ACT_CAL);
 
                 FitbitDataRequest distRequest = new FitbitDataRequest(Token);
                 KeyValuePair<string, string> dist = distRequest.GetData(iteratorDate, Fitbit.ACT_DIST);
 
-                FitbitDataRequest elevRequest = new FitbitDataRequest(Token);
-                KeyValuePair<string, string> elev = elevRequest.GetData(iteratorDate, Fitbit.ACT_ELEV);
+                FitbitDataRequest pulseRequest = new FitbitDataRequest(Token);
+                KeyValuePair<string, string> hr = pulseRequest.GetData(iteratorDate, Fitbit.ACT_HR);
 
                 FitbitDataRequest floorsRequest = new FitbitDataRequest(Token);
                 KeyValuePair<string, string> floor = floorsRequest.GetData(iteratorDate, Fitbit.ACT_FLRS);
-                */
+                
                 FitbitDataAggregator fbda = new FitbitDataAggregator();
                 
                 fbda.StepsJson = JObject.Parse(step.Value);
-                fbda.ParseData();
+                fbda.PulseJson = JObject.Parse(hr.Value);
+                fbda.CaloriesJson = JObject.Parse(cal.Value);
+                fbda.DistanceJson = JObject.Parse(dist.Value);
+                fbda.FloorsJson = JObject.Parse(floor.Value);
+
+                List<Minute> parsedData = fbda.ParseData();
+                RetrievedData.Add(iteratorDate, parsedData);
 
                 iteratorDate  = iteratorDate.AddDays(1);
             }
+        }
 
-            return new List<Minute>();
-        } 
+        public void SerializeDataToXml(string file)
+        {
+            XElement root = new XElement("fitbitSerializedData");
+
+            foreach (KeyValuePair<DateTime, List<Minute>> p in RetrievedData)
+            {
+                XElement day = new XElement("day");
+                day.Add(new XAttribute("date", p.Key.ToString("yyyy-MM-dd")));
+
+                foreach (Minute m in p.Value)
+                {
+                    day.Add(m.SerializeToXml());
+                }
+
+                root.Add(day);
+            }
+
+            XDocument x = new XDocument(root);
+
+            x.Save(file);
+        }
     }
 }

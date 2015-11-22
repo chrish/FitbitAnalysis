@@ -19,6 +19,8 @@ namespace FitbitAPIExtractor
         public static readonly string ClientId = "";
         public static readonly string Secret = "";
 
+        public static readonly string FitbitExportedData = @"c:\temp\fitbit_export.xml";
+
         static void Main(string[] args)
         {
             new Program();
@@ -39,13 +41,7 @@ namespace FitbitAPIExtractor
 
             Fitbit fb = new Fitbit(token);
             fb.GetData(Program.StartDate, Program.EndDate);
-
-            // Now we're authenticated. Let's get some data...
-
-
-
-            // Then make one request per day for the profile. Skip days with no activity
-
+            fb.SerializeDataToXml(FitbitExportedData);
 
         }
 
